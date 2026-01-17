@@ -36,7 +36,9 @@ end
 
 function M.refresh(callback)
 	if provider then
-		provider:refresh(callback)
+		vim.schedule(function()
+			provider:refresh(callback)
+		end)
 	end
 end
 
