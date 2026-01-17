@@ -11,13 +11,14 @@ function M.setup(opts)
 	end
 
 	local group = vim.api.nvim_create_augroup(GROUP_NAME, { clear = true })
-	local vcs = require("oil-vcs.highlights")
+	local highlights = require("oil-vcs.highlights")
+	local provider = require("oil-vcs.provider")
 
 	vim.api.nvim_create_autocmd("BufEnter", {
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			vcs.apply(args.buf)
+			highlights.apply(args.buf)
 		end,
 	})
 
@@ -25,7 +26,7 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			vcs.clear(args.buf)
+			highlights.clear(args.buf)
 		end,
 	})
 
@@ -33,7 +34,9 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			vcs.apply(args.buf, true)
+			provider.refresh(function()
+				highlights.apply(args.buf, true)
+			end)
 		end,
 	})
 end
