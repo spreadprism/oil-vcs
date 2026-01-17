@@ -51,7 +51,7 @@ function M:load_status(callback)
 				end
 
 				if status then
-					cache[path] = status
+					cache[vim.fs.joinpath(M.root, path)] = status
 				end
 			end
 		end
