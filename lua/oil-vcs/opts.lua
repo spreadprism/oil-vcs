@@ -5,9 +5,21 @@ local types = require("oil-vcs.types")
 local Status = types.Status
 
 ---@class oil-vcs.Opts
+---@field cwd string | fun(): string
+---@field autocmd boolean | fun(): boolean
 ---@field symbols table<oil-vcs.Status, string> Symbols used to represent different VCS statuses
 ---@field hl table<oil-vcs.Status, string> Highlight groups for different VCS statuses
+---@field providers oil-vcs.Provider[] List of VCS providers to use
 local default_opts = {
+	cwd = function()
+		return vim.fn.getcwd()
+	end,
+	autocmd = true,
+	cache_delay = 2000,
+	apply_debounce = 200,
+	providers = {
+		require("oil-vcs.providers.git"),
+	},
 	symbols = {
 		[Status.Added] = "+",
 		[Status.Modified] = "~",

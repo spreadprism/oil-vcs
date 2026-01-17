@@ -12,10 +12,14 @@ local Status = require("oil-vcs.types").Status
 
 ---@type table<string, oil-vcs.Status | table<string, oil-vcs.Status>>
 local status_match = {
-	["M"] = Status.Modified,
-	["A"] = Status.Added,
-	["?"] = Status.Untracked,
-	["!"] = Status.Ignored,
+	["M"] = Status.Modified, -- (M*)
+	["A"] = Status.Added, -- (A*)
+	["?"] = Status.Untracked, --(?*)
+	["!"] = Status.Ignored, -- (?*)
+	[" "] = { -- ( *)
+		["M"] = Status.Modified, -- ( M)
+		["A"] = Status.Added, -- ( A)
+	},
 }
 
 function M:status(path)
@@ -59,13 +63,18 @@ end
 ---@param cache oil-vcs.GitCache The cached status of files in the repository
 ---@return oil-vcs.GitCache
 function M:propagate_status(cache)
+	-- TODO: implement
 	return cache
 end
 
-function M:refresh()
+---@param callback? fun()
+function M:refresh(callback)
 	self:load_status(function(cache)
 		if cache then
 			self.cache = self:propagate_status(cache)
+		end
+		if callback then
+			callback()
 		end
 	end)
 end
