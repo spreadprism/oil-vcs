@@ -23,7 +23,7 @@ local status_match = {
 }
 
 function M:status(path)
-	local status = self.cache[path]
+	local status = M.cache[path]
 
 	if status then
 		return status
@@ -69,9 +69,9 @@ end
 
 ---@param callback? fun()
 function M:refresh(callback)
-	self:load_status(function(cache)
+	M:load_status(function(cache)
 		if cache then
-			self.cache = self:propagate_status(cache)
+			M.cache = M:propagate_status(cache)
 		end
 		if callback then
 			callback()
@@ -85,8 +85,8 @@ function M:detect(path)
 end
 
 function M:setup(path)
-	self.root = path
-	self:refresh()
+	M.root = path
+	M:refresh()
 end
 
 return M
