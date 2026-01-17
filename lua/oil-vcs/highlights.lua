@@ -72,8 +72,7 @@ function M.apply(bufnr, force)
 						end_col = end_col - 1
 					end
 					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
-						line_hl_group = entry.type == "directory" and hl or nil, -- HACK:
-						end_col = entry.type == "file" and end_col or nil, -- HACK:
+						end_col = end_col,
 						hl_group = hl,
 						virt_text = { { symbol .. " ", hl } },
 						virt_text_pos = "eol",
