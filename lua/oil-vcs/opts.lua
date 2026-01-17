@@ -19,7 +19,7 @@ local default_opts = {
 	cache_delay = 2000,
 	apply_debounce = 200,
 	providers = {
-		require("oil-vcs.providers.git"),
+		require("oil-vcs.provider.git"),
 	},
 	symbols = {
 		[Status.Added] = "+",
