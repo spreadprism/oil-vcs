@@ -45,6 +45,7 @@ function M.apply(bufnr, force)
 
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()
+	vim.print(buf)
 
 	M.clear(buf)
 
