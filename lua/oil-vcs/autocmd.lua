@@ -14,29 +14,13 @@ function M.setup(opts)
 	local highlights = require("oil-vcs.highlights")
 	local provider = require("oil-vcs.provider")
 
-	local timer = nil
 	vim.api.nvim_create_autocmd({
-		"FocusGained",
-		"WinEnter",
-		"BufWinEnter",
 		"BufEnter",
-		"BufWritePost",
 	}, {
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			if not timer then
-				vim.print("update")
-				vim.schedule(highlights.apply)
-			end
-
-			if timer then
-				timer:close()
-			end
-
-			timer = vim.defer_fn(function()
-				timer = nil
-			end, 300)
+			highlights.apply(args.buf)
 		end,
 	})
 end
