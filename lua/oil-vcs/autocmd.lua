@@ -26,15 +26,26 @@ function M.setup(opts)
 		end,
 	})
 
+	local timer = nil
 	vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "WinEnter", "BufWinEnter" }, {
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			provider.refresh(function()
-				vim.schedule(function()
-					highlights.apply(args.buf)
+			if not timer then
+				provider.refresh(function()
+					vim.schedule(function()
+						highlights.apply(args.buf)
+					end)
 				end)
-			end)
+			end
+
+			if timer then
+				timer:close()
+			end
+
+			timer = vim.defer_fn(function()
+				timer = nil
+			end, 300)
 		end,
 	})
 end
