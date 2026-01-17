@@ -18,24 +18,20 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			provider.refresh(function()
-				vim.schedule(function()
-					highlights.apply(args.buf)
-				end)
+			vim.schedule(function()
+				highlights.apply(args.buf)
 			end)
 		end,
 	})
 
 	local timer = nil
-	vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "WinEnter", "BufWinEnter" }, {
+	vim.api.nvim_create_autocmd({ "FocusGained", "WinEnter", "BufWinEnter" }, {
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
 			if not timer then
-				provider.refresh(function()
-					vim.schedule(function()
-						highlights.apply(args.buf)
-					end)
+				vim.schedule(function()
+					highlights.apply(args.buf)
 				end)
 			end
 
