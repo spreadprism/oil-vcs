@@ -9,9 +9,7 @@ function M.setup(user_opts)
 	local refresh = require("oil.actions").refresh
 	local orig_refresh = refresh.callback
 	refresh.callback = function(...)
-		require("oil-vcs.provider").refresh(function()
-			require("oil-vcs.highlights").apply(nil, true)
-		end)
+		require("oil-vcs.highlights").apply(nil, true)
 		orig_refresh(...)
 	end
 end
