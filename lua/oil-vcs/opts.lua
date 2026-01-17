@@ -1,4 +1,5 @@
 local M = {}
+M.PLUGIN_PREFIX = "OilVcs"
 
 local types = require("oil-vcs.types")
 

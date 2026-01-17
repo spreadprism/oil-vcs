@@ -1,6 +1,6 @@
 local M = {}
 
-local PREFIX = require("oil-vcs").PLUGIN_PREFIX
+local PREFIX = require("oil-vcs.opts").PLUGIN_PREFIX
 
 local default_highlights = {
 	[PREFIX .. "Added"] = { link = "Added" },

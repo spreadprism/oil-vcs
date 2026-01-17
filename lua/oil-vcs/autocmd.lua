@@ -1,6 +1,6 @@
 local M = {}
 
-local GROUP_NAME = require("oil-vcs").PLUGIN_PREFIX
+local GROUP_NAME = require("oil-vcs.opts").PLUGIN_PREFIX
 
 ---@param opts oil-vcs.Opts
 function M.setup(opts)
@@ -11,7 +11,7 @@ function M.setup(opts)
 	end
 
 	local group = vim.api.nvim_create_augroup(GROUP_NAME, { clear = true })
-	local vcs = require("oil-vcs")
+	local vcs = require("oil-vcs.highlights")
 
 	vim.api.nvim_create_autocmd("BufEnter", {
 		group = group,
