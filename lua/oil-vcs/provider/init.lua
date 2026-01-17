@@ -29,6 +29,7 @@ function M.setup(opts)
 
 	---@diagnostic disable-next-line: param-type-mismatch
 	provider.setup(opts, cwd)
+	M.refresh()
 	timer:start(opts.cache_delay, opts.cache_delay, function()
 		M.refresh()
 	end)
@@ -36,9 +37,7 @@ end
 
 function M.refresh(callback)
 	if provider then
-		vim.schedule(function()
-			provider:refresh(callback)
-		end)
+		provider:refresh(callback)
 	end
 end
 

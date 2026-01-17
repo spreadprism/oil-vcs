@@ -18,7 +18,9 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			highlights.apply(args.buf)
+			vim.schedule(function()
+				highlights.apply(args.buf)
+			end)
 		end,
 	})
 
