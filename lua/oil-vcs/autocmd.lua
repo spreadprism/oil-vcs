@@ -18,9 +18,7 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			vim.schedule(function()
-				highlights.apply(args.buf)
-			end)
+			vim.schedule(highlights.apply)
 		end,
 	})
 
@@ -30,9 +28,7 @@ function M.setup(opts)
 		pattern = "oil://*",
 		callback = function(args)
 			if not timer then
-				vim.schedule(function()
-					highlights.apply(args.buf)
-				end)
+				vim.schedule(highlights.apply)
 			end
 
 			if timer then
