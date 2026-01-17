@@ -45,7 +45,6 @@ function M.apply(bufnr, force)
 
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()
-	vim.print(buf)
 
 	M.clear(buf)
 
@@ -62,6 +61,8 @@ function M.apply(bufnr, force)
 			elseif entry.type == "directory" then
 				path = vim.fs.joinpath(current_dir, entry.name) .. "/"
 			end
+
+			print(path)
 
 			local status = require("oil-vcs.provider").status(path)
 			if status then
@@ -80,7 +81,8 @@ end
 
 ---@param bufnr integer
 function M.clear(bufnr)
-	vim.api.nvim_buf_clear_namespace(bufnr, NAMESPACE, 0, -1)
+	local buf = bufnr or vim.api.nvim_get_current_buf()
+	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
 end
 
 return M
