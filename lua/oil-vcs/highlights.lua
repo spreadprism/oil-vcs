@@ -50,7 +50,7 @@ function M.apply(bufnr, force)
 
 	local current_dir = oil.get_current_dir(buf)
 
-	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 
 	for i, line in ipairs(lines) do
 		local entry = oil.get_entry_on_line(buf, i)
