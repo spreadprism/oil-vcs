@@ -25,23 +25,9 @@ end
 
 local NAMESPACE = vim.api.nvim_create_namespace(PREFIX .. "Highlights")
 
-local timer = vim.loop.new_timer()
 ---@param bufnr? integer
----@param force? boolean
-function M.apply(bufnr, force)
+function M.apply(bufnr)
 	local opts = require("oil-vcs.opts").opts()
-
-	if force then -- HACK: prob a better way to do this
-	elseif timer and timer:is_active() then
-		return
-	end
-
-	if timer then
-		timer:stop()
-		timer:start(opts.apply_debounce, 0, function()
-			timer:stop()
-		end)
-	end
 
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()

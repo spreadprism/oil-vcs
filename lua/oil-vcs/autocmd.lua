@@ -18,29 +18,21 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			vim.schedule(function()
-				highlights.apply(args.buf)
+			provider.refresh(function()
+				vim.schedule(function()
+					highlights.apply(args.buf)
+				end)
 			end)
 		end,
 	})
 
-	vim.api.nvim_create_autocmd("BufLeave", {
-		group = group,
-		pattern = "oil://*",
-		callback = function(args)
-			vim.schedule(function()
-				highlights.clear(args.buf)
-			end)
-		end,
-	})
-
-	vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+	vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "WinEnter", "BufWinEnter" }, {
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
 			provider.refresh(function()
 				vim.schedule(function()
-					highlights.apply(args.buf, true)
+					highlights.apply(args.buf)
 				end)
 			end)
 		end,

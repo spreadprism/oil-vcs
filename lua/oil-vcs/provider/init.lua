@@ -9,8 +9,6 @@ local M = {}
 ---@type oil-vcs.Provider
 local provider
 
-local timer = vim.loop.new_timer()
-
 ---@param opts oil-vcs.Opts
 function M.setup(opts)
 	local cwd = type(opts.cwd) == "function" and opts.cwd() or opts.cwd
@@ -30,14 +28,10 @@ function M.setup(opts)
 	---@diagnostic disable-next-line: param-type-mismatch
 	provider.setup(opts, cwd)
 	M.refresh()
-	timer:start(opts.cache_delay, opts.cache_delay, function()
-		M.refresh()
-	end)
 end
 
 function M.refresh(callback)
 	if provider then
-		vim.print("refreshing")
 		provider:refresh(callback)
 	end
 end
