@@ -73,7 +73,7 @@ function M.apply(bufnr, force)
 					if entry.type == "file" then
 						end_col = end_col - 1
 					end
-					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, 0, {
+					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
 						end_col = end_col,
 						hl_group = hl,
 						virt_text = { { symbol .. " ", hl } },
