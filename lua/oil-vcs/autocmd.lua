@@ -37,7 +37,9 @@ function M.setup(opts)
 		pattern = "oil://*",
 		callback = function(args)
 			provider.refresh(function()
-				highlights.apply(args.buf, true)
+				vim.schedule(function()
+					highlights.apply(args.buf, true)
+				end)
 			end)
 		end,
 	})
