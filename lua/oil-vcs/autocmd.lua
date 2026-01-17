@@ -28,11 +28,13 @@ function M.setup(opts)
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)
-			highlights.clear(args.buf)
+			vim.schedule(function()
+				highlights.clear(args.buf)
+			end)
 		end,
 	})
 
-	vim.api.nvim_create_autocmd({ "BufWritePost", "TextChanged", "TextChangedI" }, {
+	vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 		group = group,
 		pattern = "oil://*",
 		callback = function(args)

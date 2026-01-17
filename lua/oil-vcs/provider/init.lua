@@ -37,6 +37,7 @@ end
 
 function M.refresh(callback)
 	if provider then
+		vim.print("refreshing")
 		provider:refresh(callback)
 	end
 end
