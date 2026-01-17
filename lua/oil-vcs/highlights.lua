@@ -68,8 +68,14 @@ function M.apply(bufnr, force)
 			if status then
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
+					local name_start = line:find(entry.name, 1, true)
+					local end_col = name_start + #entry.name
+					if entry.type == "file" then
+						end_col = end_col - 1
+					end
 					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, 0, {
-						line_hl_group = hl,
+						end_col = end_col,
+						hl_group = hl,
 						virt_text = { { symbol .. " ", hl } },
 						virt_text_pos = "eol",
 					})
