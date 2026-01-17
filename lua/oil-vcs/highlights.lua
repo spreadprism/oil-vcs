@@ -68,8 +68,8 @@ function M.apply(bufnr, force)
 			if status then
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
-					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i, 0, {
-						hl_group = hl,
+					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, 0, {
+						line_hl_group = hl,
 						virt_text = { { symbol .. " ", hl } },
 						virt_text_pos = "eol",
 					})
