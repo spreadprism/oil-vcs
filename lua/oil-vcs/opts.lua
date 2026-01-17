@@ -46,7 +46,7 @@ end
 
 ---@return oil-vcs.Opts
 function M.opts()
-	return vim.fn.deepcopy(opts, true)
+	return opts
 end
 
 return M
