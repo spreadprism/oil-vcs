@@ -62,8 +62,6 @@ function M.apply(bufnr, force)
 				path = vim.fs.joinpath(current_dir, entry.name) .. "/"
 			end
 
-			print(path)
-
 			local status = require("oil-vcs.provider").status(path)
 			if status then
 				local hl, symbol = opts.hl[status], opts.symbols[status]
@@ -74,7 +72,8 @@ function M.apply(bufnr, force)
 						end_col = end_col - 1
 					end
 					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
-						end_col = end_col,
+						line_hl_group = entry.type == "directory" and hl or nil, -- HACK:
+						end_col = entry.type == "file" and end_col or nil, -- HACK:
 						hl_group = hl,
 						virt_text = { { symbol .. " ", hl } },
 						virt_text_pos = "eol",
