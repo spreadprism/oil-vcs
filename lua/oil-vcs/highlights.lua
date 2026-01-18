@@ -51,31 +51,33 @@ function M.update_buffer(bufnr)
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
 					local name_start = line:find(entry.name, 1, true)
-					local end_col = name_start + #entry.name
-					if entry.type == "file" then
-						end_col = end_col - 1
+					if name_start then
+						local end_col = name_start + #entry.name
+						if entry.type == "file" then
+							end_col = end_col - 1
+						end
+
+						local extmark_opts = {
+							end_col = end_col,
+							hl_group = hl,
+							virt_text = { { symbol .. " ", hl } },
+							virt_text_pos = "eol",
+						}
+
+						local id = cache[buf] and cache[buf][entry.id]
+
+						if id then
+							extmark_opts.id = id
+							vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
+						else
+							id = vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
+						end
+
+						cache[buf] = cache[buf] or {}
+						cache[buf][entry.id] = id
 					end
-
-					local extmark_opts = {
-						end_col = end_col,
-						hl_group = hl,
-						virt_text = { { symbol .. " ", hl } },
-						virt_text_pos = "eol",
-					}
-
-					local id = cache[buf] and cache[buf][entry.id]
-
-					if id then
-						extmark_opts.id = id
-						vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
-					else
-						id = vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
-					end
-
-					cache[buf] = cache[buf] or {}
-					cache[buf][entry.id] = id
 				end
-			else -- INFO: clear status if any
+			else -- INFO: clear since no status
 				vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i - 1, i)
 			end
 		end
