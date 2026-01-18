@@ -32,13 +32,11 @@ end
 
 ---@param callback fun(cache?: oil-vcs.GitCache)
 function M:load_status(callback)
+	local cache = {}
 	vim.system({ "git", "status", "--porcelain", "--ignored" }, { cwd = self.root }, function(obj)
 		if obj.code ~= 0 then
-			callback(nil)
 			return
 		end
-
-		local cache = {}
 
 		local lines = vim.split(obj.stdout, "\n")
 
@@ -55,9 +53,8 @@ function M:load_status(callback)
 				end
 			end
 		end
-
-		callback(cache)
-	end)
+	end):wait()
+	callback(cache)
 end
 
 ---@param cache oil-vcs.GitCache The cached status of files in the repository
