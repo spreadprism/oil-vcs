@@ -36,6 +36,7 @@ function M.update_buffer(bufnr)
 
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 
+	vim.api.buf_clear_namespace(buf, NAMESPACE, 0, -1)
 	for i, line in ipairs(lines) do
 		local entry = oil.get_entry_on_line(buf, i)
 		if entry then
