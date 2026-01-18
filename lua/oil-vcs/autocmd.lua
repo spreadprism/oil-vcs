@@ -52,6 +52,7 @@ local function oil_autocmd()
 			vim.api.nvim_create_autocmd({
 				"InsertLeave",
 				"TextChanged",
+				"TextChangedI",
 				"FocusGained",
 			}, {
 				group = group,
