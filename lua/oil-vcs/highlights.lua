@@ -11,7 +11,6 @@ local default_highlights = {
 }
 
 ---@param opts oil-vcs.Opts
----Add highlight groups if they do not already exist and if they are in the defaults
 function M.setup(opts)
 	for _, hl in pairs(opts.hl) do
 		local name, hl_opts = hl, default_highlights[hl]
@@ -26,13 +25,10 @@ end
 local NAMESPACE = vim.api.nvim_create_namespace(PREFIX .. "Highlights")
 
 ---@param bufnr? integer
-function M.apply(bufnr)
+function M.update_buffer(bufnr)
 	local opts = require("oil-vcs.opts").opts()
-
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()
-
-	M.clear(buf)
 
 	local current_dir = oil.get_current_dir(buf)
 
@@ -49,7 +45,7 @@ function M.apply(bufnr)
 			end
 
 			local status = require("oil-vcs.provider").status(path)
-			if status then
+			if status then -- INFO: apply status
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
 					local name_start = line:find(entry.name, 1, true)
@@ -64,15 +60,11 @@ function M.apply(bufnr)
 						virt_text_pos = "eol",
 					})
 				end
+			else -- INFO: clear status if any
+				vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i - 1, i)
 			end
 		end
 	end
-end
-
----@param bufnr integer
-function M.clear(bufnr)
-	local buf = bufnr or vim.api.nvim_get_current_buf()
-	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
 end
 
 return M

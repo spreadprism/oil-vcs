@@ -18,10 +18,9 @@ local function init_provider(path)
 
 	for _, initiator in pairs(opts.providers) do
 		local can_handle, root = initiator.detect(path)
-		vim.print({ can_handle = can_handle, root = root })
 		if can_handle and root then
 			local provider = initiator.new(root)
-			M.providers[root] = provider
+			table.insert(M.providers, provider)
 			return provider
 		end
 	end
@@ -77,6 +76,10 @@ function M.status(path)
 	if provider then
 		return provider:status(path)
 	end
+end
+
+function M.clear_providers()
+	M.providers = {}
 end
 
 return M
