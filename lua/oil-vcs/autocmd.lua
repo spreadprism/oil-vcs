@@ -24,7 +24,7 @@ function M.setup(opts)
 
 	vim.api.nvim_create_autocmd("User", {
 		group = group,
-		pattern = { "OilActionPost" },
+		pattern = { "OilActionsPost" },
 		callback = function(_)
 			provider.refresh() -- TODO: only refresh on dir changed
 		end,
