@@ -14,13 +14,30 @@ function M.setup(opts)
 	local highlights = require("oil-vcs.highlights")
 	local provider = require("oil-vcs.provider")
 
-	vim.api.nvim_create_autocmd({
-		"BufEnter",
-	}, {
+	vim.api.nvim_create_autocmd({ "FileType" }, {
 		group = group,
-		pattern = "oil://*",
-		callback = function(args)
-			highlights.apply(args.buf)
+		pattern = { "oil" },
+		callback = function()
+			local buffer = vim.api.nvim_get_current_buf()
+			vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost" }, {
+				group = group,
+				buffer = buffer,
+				callback = function()
+					provider.refresh(function()
+						highlights.apply(buffer)
+					end)
+				end,
+			})
+
+			vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+				group = group,
+				buffer = buffer,
+				callback = function()
+					provider.refresh(function()
+						highlights.apply(buffer)
+					end)
+				end,
+			})
 		end,
 	})
 end
