@@ -22,6 +22,18 @@ function M.setup(opts)
 		end,
 	})
 
+	vim.api.nvim_create_autocmd("User", {
+		group = group,
+		pattern = { "OilActionPost", "OilEnter" },
+		callback = function()
+			provider.refresh(function()
+				vim.schedule(function()
+					highlights.apply()
+				end)
+			end)
+		end,
+	})
+
 	vim.api.nvim_create_autocmd({ "FileType" }, {
 		group = group,
 		pattern = { "oil" },

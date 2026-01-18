@@ -19,8 +19,6 @@ local default_opts = {
 	autocmd = true,
 	user_events = {
 		"NeogitStatusRefreshed",
-		"OilEnter",
-		"OilActionPost",
 	},
 	cache_delay = 2000,
 	apply_debounce = 200,
