@@ -3,7 +3,6 @@ local M = {}
 ---@param user_opts? oil-vcs.Opts
 function M.setup(user_opts)
 	local opts = require("oil-vcs.opts").setup(user_opts)
-	require("oil-vcs.provider").setup(opts)
 	require("oil-vcs.highlights").setup(opts)
 	require("oil-vcs.autocmd").setup(opts)
 end

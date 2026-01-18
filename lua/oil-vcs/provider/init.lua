@@ -1,42 +1,71 @@
+---@class oil-vcs.ProviderInitiator
+---@field new fun(root: string): oil-vcs.Provider creates a new provider for the given root directory
+---@field detect fun(path: string): (boolean, string) detects if the given path can be handled by this provider, returns (true, root) if it can
+
 ---@class oil-vcs.Provider
----@field refresh fun(self, callback: fun()|nil)
+---@field root string root directory of the provider
+---@field refresh fun(self)
 ---@field status fun(self, path: string): oil-vcs.Status|nil
----@field detect fun(self, path: string): boolean, string
----@field setup fun(self, path: string)
 
 local M = {}
 
----@type oil-vcs.Provider
-local provider
+---@type table<string, oil-vcs.Provider>
+M.providers = {}
 
----@param opts oil-vcs.Opts
-function M.setup(opts)
-	local cwd = type(opts.cwd) == "function" and opts.cwd() or opts.cwd
+---@param path string
+local function init_provider(path)
+	local opts = require("oil-vcs.opts").opts()
 
-	for _, p in ipairs(opts.providers) do
-		---@diagnostic disable-next-line: param-type-mismatch
-		if p:detect(cwd) then
-			provider = p
-			break
+	for _, initiator in pairs(opts.providers) do
+		local can_handle, root = initiator.detect(path)
+		if can_handle and root then
+			local provider = initiator.new(root)
+			M.providers[root] = provider
+			return provider
+		end
+	end
+end
+
+---@param path string
+---@overload fun(bufnr: integer): oil-vcs.Provider|nil
+---@return oil-vcs.Provider|nil
+local function get_provider(path)
+	if type(path) == "number" then
+		local buf = path
+		local current_dir = require("oil").get_current_dir(buf)
+		if not current_dir then
+			return nil
+		end
+		path = current_dir
+	end
+
+	for _, provider in pairs(M.providers) do
+		if vim.startswith(path, provider.root) then
+			return provider
 		end
 	end
 
-	if not provider then
-		return
-	end
-
-	---@diagnostic disable-next-line: param-type-mismatch
-	provider.setup(opts, cwd)
-	M.refresh()
+	return init_provider(path)
 end
 
-function M.refresh(callback)
-	if provider then
-		provider:refresh(callback)
+---@param path? string
+---@overload fun(bufnr?: integer)
+function M.refresh(path)
+	if path then
+		local provider = get_provider(path)
+		if provider then
+			provider:refresh()
+		end
+	else
+		for _, provider in pairs(M.providers) do
+			provider:refresh()
+		end
 	end
 end
 
+---@param path string
 function M.status(path)
+	local provider = get_provider(path)
 	if provider then
 		return provider:status(path)
 	end

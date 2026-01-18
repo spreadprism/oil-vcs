@@ -11,7 +11,7 @@ local Status = types.Status
 ---@field autocmd boolean | fun(): boolean
 ---@field symbols table<oil-vcs.Status, string> Symbols used to represent different VCS statuses
 ---@field hl table<oil-vcs.Status, string> Highlight groups for different VCS statuses
----@field providers oil-vcs.Provider[] List of VCS providers to use
+---@field providers oil-vcs.ProviderInitiator[] List of VCS providers to use
 local default_opts = {
 	cwd = function()
 		return vim.fn.getcwd()

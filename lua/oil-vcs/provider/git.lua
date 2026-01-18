@@ -1,12 +1,23 @@
+---@type oil-vcs.ProviderInitiator
+local M = {}
+-- TODO: add refresh timer
+
 ---@alias oil-vcs.GitCache table<string, oil-vcs.Status>
 
 ---@class oil-vcs.GitProvider : oil-vcs.Provider
----@field root string The root directory of the Git repository
 ---@field cache oil-vcs.GitCache The cached status of files in the repository
-local M = {
-	root = "",
+local GitProvider = {
 	cache = {},
 }
+
+---@param root string
+function M.new(root)
+	local self = setmetatable({}, { __index = GitProvider })
+	self.root = root
+	self.cache = {}
+	self:refresh()
+	return self
+end
 
 local Status = require("oil-vcs.types").Status
 
@@ -22,18 +33,17 @@ local status_match = {
 	},
 }
 
-function M:status(path)
-	local status = M.cache[path]
-
-	if status then
-		return status
-	end
+---@param path string
+---@return oil-vcs.Status|nil
+function GitProvider:status(path)
+	return self.cache[path]
 end
 
----@param callback fun(cache?: oil-vcs.GitCache)
-function M:load_status(callback)
-	local cache = {}
-	vim.system({ "git", "status", "--porcelain", "--ignored" }, { cwd = self.root }, function(obj)
+---@param root string
+---@return table<string, oil-vcs.Status>
+local function git_status(root)
+	local tbl = {}
+	vim.system({ "git", "status", "--porcelain", "--ignored" }, { cwd = root }, function(obj)
 		if obj.code ~= 0 then
 			return
 		end
@@ -49,41 +59,30 @@ function M:load_status(callback)
 				end
 
 				if status then
-					cache[vim.fs.joinpath(M.root, path)] = status
+					tbl[vim.fs.joinpath(root, path)] = status
 				end
 			end
 		end
 	end):wait()
-	callback(cache)
+	return tbl
 end
 
----@param cache oil-vcs.GitCache The cached status of files in the repository
----@return oil-vcs.GitCache
-function M:propagate_status(cache)
+---@param tbl table<string, oil-vcs.Status>
+---@return table<string, oil-vcs.Status>
+local function propagate_status(tbl)
 	-- TODO: implement
-	return cache
+	return tbl
 end
 
----@param callback? fun()
-function M:refresh(callback)
-	M:load_status(function(cache)
-		if cache then
-			M.cache = M:propagate_status(cache)
-		end
-		if callback then
-			callback()
-		end
-	end)
+function GitProvider:refresh()
+	local status = git_status(self.root)
+	status = propagate_status(status)
+	self.cache = status
 end
 
-function M:detect(path)
+function M.detect(path)
 	local output = vim.fn.system(string.format("cd %s && git rev-parse --show-toplevel", path))
 	return vim.v.shell_error == 0, output
-end
-
-function M:setup(path)
-	M.root = path
-	M:refresh()
 end
 
 return M
