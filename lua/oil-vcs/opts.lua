@@ -17,9 +17,7 @@ local default_opts = {
 		return vim.fn.getcwd()
 	end,
 	autocmd = true,
-	user_events = {
-		"NeogitStatusRefreshed",
-	},
+	user_events = {},
 	cache_delay = 2000,
 	apply_debounce = 200,
 	providers = {
