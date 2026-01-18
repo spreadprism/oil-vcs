@@ -40,6 +40,12 @@ local function get_provider(path)
 		path = current_dir
 	end
 
+	path = vim.fs.abspath(path)
+
+	if vim.fn.isdirectory(path) == 0 then
+		path = vim.fs.dirname(path)
+	end
+
 	for _, provider in pairs(M.providers) do
 		if vim.startswith(path, provider.root) then
 			return provider

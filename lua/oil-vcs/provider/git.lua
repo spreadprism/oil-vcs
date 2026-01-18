@@ -81,12 +81,6 @@ function GitProvider:refresh()
 end
 
 function M.detect(path)
-	path = vim.fs.abspath(path)
-
-	if vim.fn.isdirectory(path) == 0 then
-		path = vim.fs.dirname(path)
-	end
-
 	local output = vim.fn.system(string.format("cd %s && git rev-parse --show-toplevel", path))
 
 	output = vim.trim(output)
