@@ -18,6 +18,7 @@ local function init_provider(path)
 
 	for _, initiator in pairs(opts.providers) do
 		local can_handle, root = initiator.detect(path)
+		vim.print({ can_handle = can_handle, root = root })
 		if can_handle and root then
 			local provider = initiator.new(root)
 			M.providers[root] = provider
