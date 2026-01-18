@@ -72,6 +72,7 @@ end
 
 ---@param path string
 function M.status(path)
+	path = vim.fs.abspath(path)
 	local provider = get_provider(path)
 	if provider then
 		return provider:status(path)
