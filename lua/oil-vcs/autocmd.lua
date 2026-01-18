@@ -31,15 +31,25 @@ function M.setup(opts)
 				end,
 			})
 
-			vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+			local timer = nil
+			vim.api.nvim_create_autocmd({
+				"InsertLeave",
+				"TextChanged",
+				"FocusGained",
+			}, {
 				group = group,
 				buffer = buffer,
 				callback = function()
+					if timer then
+						return
+					end
 					vim.schedule(function()
-						provider.refresh(function()
-							highlights.apply(buffer)
-						end)
+						highlights.apply(buffer)
 					end)
+
+					timer = vim.defer_fn(function()
+						timer = nil
+					end, 200)
 				end,
 			})
 		end,
