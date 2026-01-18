@@ -41,7 +41,7 @@ function M.setup(opts)
 				callback = function()
 					provider.refresh(buffer)
 					vim.schedule(function()
-						highlights.apply(buffer)
+						highlights.update_buffer(buffer)
 					end)
 				end,
 			})
@@ -57,7 +57,7 @@ function M.setup(opts)
 				buffer = buffer,
 				callback = function()
 					vim.schedule(function()
-						highlights.apply(buffer)
+						highlights.update_buffer(buffer)
 					end)
 				end,
 			})
