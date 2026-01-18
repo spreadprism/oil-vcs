@@ -83,6 +83,7 @@ end
 function M.detect(path)
 	path = vim.fs.abspath(path)
 
+	vim.print(path .. " is a directory: " .. tostring(vim.fn.isdirectory(path)))
 	if not vim.fn.isdirectory(path) then
 		path = vim.fs.dirname(path)
 	end
