@@ -82,7 +82,13 @@ end
 
 function M.detect(path)
 	path = vim.fs.abspath(path)
+
+	if not vim.fn.isdirectory(path) then
+		path = vim.fs.dirname(path)
+	end
+
 	local output = vim.fn.system(string.format("cd %s && git rev-parse --show-toplevel", path))
+
 	output = vim.trim(output)
 	return vim.v.shell_error == 0, output
 end
