@@ -35,6 +35,7 @@ function M.update_buffer(bufnr)
 	local current_dir = oil.get_current_dir(buf)
 
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
 
 	for i, line in ipairs(lines) do
 		local entry = oil.get_entry_on_line(buf, i)
