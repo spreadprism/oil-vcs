@@ -24,6 +24,8 @@ end
 
 local NAMESPACE = vim.api.nvim_create_namespace(PREFIX .. "Highlights")
 
+local cache = {}
+
 ---@param bufnr? integer
 function M.update_buffer(bufnr)
 	local opts = require("oil-vcs.opts").opts()
@@ -53,12 +55,25 @@ function M.update_buffer(bufnr)
 					if entry.type == "file" then
 						end_col = end_col - 1
 					end
-					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
+
+					local extmark_opts = {
 						end_col = end_col,
 						hl_group = hl,
 						virt_text = { { symbol .. " ", hl } },
 						virt_text_pos = "eol",
-					})
+					}
+
+					local id = cache[buf] and cache[buf][i]
+
+					if id then
+						extmark_opts.id = id
+						vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
+					else
+						id = vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
+					end
+
+					cache[buf] = cache[buf] or {}
+					cache[buf][i] = id
 				end
 			else -- INFO: clear status if any
 				vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i - 1, i)
