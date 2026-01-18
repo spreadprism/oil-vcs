@@ -23,8 +23,10 @@ function M.setup(opts)
 				group = group,
 				buffer = buffer,
 				callback = function()
-					provider.refresh(function()
-						highlights.apply(buffer)
+					vim.schedule(function()
+						provider.refresh(function()
+							highlights.apply(buffer)
+						end)
 					end)
 				end,
 			})
@@ -33,8 +35,10 @@ function M.setup(opts)
 				group = group,
 				buffer = buffer,
 				callback = function()
-					provider.refresh(function()
-						highlights.apply(buffer)
+					vim.schedule(function()
+						provider.refresh(function()
+							highlights.apply(buffer)
+						end)
 					end)
 				end,
 			})
