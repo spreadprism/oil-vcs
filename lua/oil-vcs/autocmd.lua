@@ -36,6 +36,8 @@ function M.setup(opts)
 				"InsertLeave",
 				"TextChanged",
 				"FocusGained",
+				"WinEnter",
+				"BufWinEnter",
 			}, {
 				group = group,
 				buffer = buffer,
