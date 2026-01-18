@@ -17,7 +17,9 @@ function M.setup(opts)
 	vim.api.nvim_create_autocmd("User", {
 		group = group,
 		pattern = opts.user_events,
-		callback = provider.refresh,
+		callback = function()
+			provider.refresh()
+		end,
 	})
 
 	vim.api.nvim_create_autocmd({ "FileType" }, {
@@ -29,11 +31,7 @@ function M.setup(opts)
 				group = group,
 				buffer = buffer,
 				callback = function()
-					provider.refresh(function()
-						vim.schedule(function()
-							highlights.apply(buffer)
-						end)
-					end)
+					provider.refresh()
 				end,
 			})
 
