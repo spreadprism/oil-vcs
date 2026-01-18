@@ -35,11 +35,22 @@ local function oil_autocmd()
 			local buffer = vim.api.nvim_get_current_buf()
 
 			vim.api.nvim_create_autocmd({
+				"TextYankPost",
+			}, {
+				group = group,
+				buffer = buffer,
+				pattern = "*",
+				callback = function()
+					vim.schedule(function()
+						highlights.update_buffer(buffer)
+					end)
+				end,
+			})
+			vim.api.nvim_create_autocmd({
 				"BufModifiedSet",
 				"BufEnter",
 				"TextChanged",
 				"TextChangedI",
-				"TextYankPost",
 			}, {
 				group = group,
 				buffer = buffer,
