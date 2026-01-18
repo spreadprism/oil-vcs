@@ -32,6 +32,8 @@ function M.apply(bufnr)
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()
 
+	M.clear(buf)
+
 	local current_dir = oil.get_current_dir(buf)
 
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
