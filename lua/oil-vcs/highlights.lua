@@ -47,7 +47,7 @@ function M.update_buffer(bufnr)
 			end
 
 			local status = require("oil-vcs.provider").status(path)
-			local id = cache[buf] and cache[buf][entry.id]
+			local id = cache[buf] and cache[buf][entry.id + entry.name]
 			if status then -- INFO: apply status
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
@@ -73,13 +73,13 @@ function M.update_buffer(bufnr)
 						end
 
 						cache[buf] = cache[buf] or {}
-						cache[buf][entry.id] = id
+						cache[buf][entry.id + entry.name] = id
 					end
 				end
 			else -- INFO: clear since no status
 				if id then
 					vim.api.nvim_buf_del_extmark(buf, NAMESPACE, id)
-					cache[buf][entry.id] = nil
+					cache[buf][entry.id + entry.name] = nil
 				end
 			end
 		end
