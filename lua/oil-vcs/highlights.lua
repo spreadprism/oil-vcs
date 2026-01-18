@@ -63,7 +63,7 @@ function M.update_buffer(bufnr)
 						virt_text_pos = "eol",
 					}
 
-					local id = cache[buf] and cache[buf][i]
+					local id = cache[buf] and cache[buf][entry.id]
 
 					if id then
 						extmark_opts.id = id
@@ -73,7 +73,7 @@ function M.update_buffer(bufnr)
 					end
 
 					cache[buf] = cache[buf] or {}
-					cache[buf][i] = id
+					cache[buf][entry.id] = id
 				end
 			else -- INFO: clear status if any
 				vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i - 1, i)
