@@ -27,9 +27,9 @@ function M.setup(opts)
 		pattern = { "OilActionPost", "OilEnter" },
 		callback = function()
 			provider.refresh(function()
-				vim.schedule(function()
+				vim.defer_fn(function()
 					highlights.apply()
-				end)
+				end, 100)
 			end)
 		end,
 	})
