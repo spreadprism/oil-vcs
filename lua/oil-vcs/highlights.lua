@@ -33,40 +33,41 @@ function M.apply(bufnr)
 	local buf = bufnr or vim.api.nvim_get_current_buf()
 
 	M.clear(buf)
+	vim.schedule(function()
+		local current_dir = oil.get_current_dir(buf)
 
-	local current_dir = oil.get_current_dir(buf)
+		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 
-	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		for i, line in ipairs(lines) do
+			local entry = oil.get_entry_on_line(buf, i)
+			if entry then
+				local path
+				if entry.type == "file" then
+					path = vim.fs.joinpath(current_dir, entry.name)
+				elseif entry.type == "directory" then
+					path = vim.fs.joinpath(current_dir, entry.name) .. "/"
+				end
 
-	for i, line in ipairs(lines) do
-		local entry = oil.get_entry_on_line(buf, i)
-		if entry then
-			local path
-			if entry.type == "file" then
-				path = vim.fs.joinpath(current_dir, entry.name)
-			elseif entry.type == "directory" then
-				path = vim.fs.joinpath(current_dir, entry.name) .. "/"
-			end
-
-			local status = require("oil-vcs.provider").status(path)
-			if status then
-				local hl, symbol = opts.hl[status], opts.symbols[status]
-				if hl and symbol then
-					local name_start = line:find(entry.name, 1, true)
-					local end_col = name_start + #entry.name
-					if entry.type == "file" then
-						end_col = end_col - 1
+				local status = require("oil-vcs.provider").status(path)
+				if status then
+					local hl, symbol = opts.hl[status], opts.symbols[status]
+					if hl and symbol then
+						local name_start = line:find(entry.name, 1, true)
+						local end_col = name_start + #entry.name
+						if entry.type == "file" then
+							end_col = end_col - 1
+						end
+						vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
+							end_col = end_col,
+							hl_group = hl,
+							virt_text = { { symbol .. " ", hl } },
+							virt_text_pos = "eol",
+						})
 					end
-					vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
-						end_col = end_col,
-						hl_group = hl,
-						virt_text = { { symbol .. " ", hl } },
-						virt_text_pos = "eol",
-					})
 				end
 			end
 		end
-	end
+	end)
 end
 
 ---@param bufnr integer
