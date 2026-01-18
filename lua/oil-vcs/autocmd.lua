@@ -37,6 +37,8 @@ local function oil_autocmd()
 			vim.api.nvim_create_autocmd({
 				"BufModifiedSet",
 				"BufEnter",
+				"TextChanged",
+				"TextChangedI",
 			}, {
 				group = group,
 				buffer = buffer,
