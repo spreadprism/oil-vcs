@@ -14,6 +14,12 @@ function M.setup(opts)
 	local highlights = require("oil-vcs.highlights")
 	local provider = require("oil-vcs.provider")
 
+	vim.api.nvim_create_autocmd("User", {
+		group = group,
+		pattern = opts.user_events,
+		callback = provider.refresh,
+	})
+
 	vim.api.nvim_create_autocmd({ "FileType" }, {
 		group = group,
 		pattern = { "oil" },
@@ -23,8 +29,8 @@ function M.setup(opts)
 				group = group,
 				buffer = buffer,
 				callback = function()
-					vim.schedule(function()
-						provider.refresh(function()
+					provider.refresh(function()
+						vim.schedule(function()
 							highlights.apply(buffer)
 						end)
 					end)

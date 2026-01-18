@@ -7,6 +7,7 @@ local Status = types.Status
 
 ---@class oil-vcs.Opts
 ---@field cwd string | fun(): string
+---@field user_events string[] List of user events that trigger a VCS status refresh
 ---@field autocmd boolean | fun(): boolean
 ---@field symbols table<oil-vcs.Status, string> Symbols used to represent different VCS statuses
 ---@field hl table<oil-vcs.Status, string> Highlight groups for different VCS statuses
@@ -16,6 +17,9 @@ local default_opts = {
 		return vim.fn.getcwd()
 	end,
 	autocmd = true,
+	user_events = {
+		"NeogitStatusRefreshed",
+	},
 	cache_delay = 2000,
 	apply_debounce = 200,
 	providers = {
