@@ -39,6 +39,7 @@ local function oil_autocmd()
 				"BufEnter",
 				"TextChanged",
 				"TextChangedI",
+				"TextYankPost",
 			}, {
 				group = group,
 				buffer = buffer,
