@@ -24,8 +24,6 @@ end
 
 local NAMESPACE = vim.api.nvim_create_namespace(PREFIX .. "Highlights")
 
-local cache = {}
-
 ---@param bufnr? integer
 function M.update_buffer(bufnr)
 	local opts = require("oil-vcs.opts").opts()
@@ -35,8 +33,8 @@ function M.update_buffer(bufnr)
 	local current_dir = oil.get_current_dir(buf)
 
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
 
+	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
 	for i, line in ipairs(lines) do
 		local entry = oil.get_entry_on_line(buf, i)
 		if entry then
@@ -48,7 +46,6 @@ function M.update_buffer(bufnr)
 			end
 
 			local status = require("oil-vcs.provider").status(path)
-			local id = cache[buf] and cache[buf][path]
 			if status then -- INFO: apply status
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
@@ -59,32 +56,15 @@ function M.update_buffer(bufnr)
 							end_col = end_col - 1
 						end
 
-						local extmark_opts = {
+						vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
 							end_col = end_col,
 							hl_group = hl,
 							virt_text = { { symbol .. " ", hl } },
 							virt_text_pos = "eol",
-						}
-
-						if id then
-							extmark_opts.id = id
-							vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
-						else
-							id = vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
-						end
-
-						cache[buf] = cache[buf] or {}
-						cache[buf][path] = id
+						})
 					end
 				end
-			else -- INFO: clear since no status
-				if id then
-					vim.api.nvim_buf_del_extmark(buf, NAMESPACE, id)
-					cache[buf][path] = nil
-				end
 			end
-		else
-			vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i, i + 1)
 		end
 	end
 end
