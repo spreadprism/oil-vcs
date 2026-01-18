@@ -47,6 +47,7 @@ function M.update_buffer(bufnr)
 			end
 
 			local status = require("oil-vcs.provider").status(path)
+			local id = cache[buf] and cache[buf][entry.id]
 			if status then -- INFO: apply status
 				local hl, symbol = opts.hl[status], opts.symbols[status]
 				if hl and symbol then
@@ -64,8 +65,6 @@ function M.update_buffer(bufnr)
 							virt_text_pos = "eol",
 						}
 
-						local id = cache[buf] and cache[buf][entry.id]
-
 						if id then
 							extmark_opts.id = id
 							vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, extmark_opts)
@@ -78,7 +77,10 @@ function M.update_buffer(bufnr)
 					end
 				end
 			else -- INFO: clear since no status
-				vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i - 1, i)
+				if id then
+					vim.api.nvim_buf_del_extmark(buf, NAMESPACE, id)
+					cache[buf][entry.id] = nil
+				end
 			end
 		end
 	end
