@@ -33,27 +33,10 @@ local function oil_autocmd()
 		pattern = { "oil" },
 		callback = function()
 			local buffer = vim.api.nvim_get_current_buf()
-			vim.api.nvim_create_autocmd({
-				"BufReadPost",
-				"BufWritePost",
-				"BufEnter",
-				"BufWinEnter",
-				"WinEnter",
-			}, {
-				group = group,
-				buffer = buffer,
-				callback = function()
-					vim.schedule(function()
-						highlights.update_buffer(buffer)
-					end)
-				end,
-			})
 
 			vim.api.nvim_create_autocmd({
-				"InsertLeave",
-				"TextChanged",
-				"TextChangedI",
-				"FocusGained",
+				"BufModifiedSet",
+				"BufEnter",
 			}, {
 				group = group,
 				buffer = buffer,
