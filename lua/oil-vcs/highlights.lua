@@ -82,6 +82,8 @@ function M.update_buffer(bufnr)
 					cache[buf][path] = nil
 				end
 			end
+		else
+			vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, i, i + 1)
 		end
 	end
 end
