@@ -4,7 +4,9 @@
 
 ---@class oil-vcs.Provider
 ---@field root string root directory of the provider
+---@field timer? uv.uv_timer_t
 ---@field refresh fun(self)
+---@field refresh_defer fun(self)
 ---@field status fun(self, path: string): oil-vcs.Status|nil
 
 local M = {}
@@ -65,6 +67,21 @@ function M.refresh(path)
 	else
 		for _, provider in pairs(M.providers) do
 			provider:refresh()
+		end
+	end
+end
+
+---@param path? string
+---@overload fun(bufnr?: integer)
+function M.refresh_defer(path)
+	if path then
+		local provider = get_provider(path)
+		if provider then
+			provider:refresh_defer()
+		end
+	else
+		for _, provider in pairs(M.providers) do
+			provider:refresh_defer()
 		end
 	end
 end

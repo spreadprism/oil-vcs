@@ -34,17 +34,39 @@ local function oil_autocmd()
 		callback = function()
 			local buffer = vim.api.nvim_get_current_buf()
 
-			vim.api.nvim_create_autocmd({
-				"BufEnter",
-				"TextChanged",
-				"TextChangedI",
-			}, {
+			vim.api.nvim_create_autocmd("BufEnter", {
 				group = group,
 				buffer = buffer,
 				callback = function()
 					vim.schedule(function()
 						highlights.update_buffer(buffer)
 					end)
+				end,
+			})
+
+			local timer
+			vim.api.nvim_create_autocmd({
+				"TextChanged",
+				"TextChangedI",
+			}, {
+				group = group,
+				buffer = buffer,
+				callback = function()
+					if timer then
+						timer:stop()
+					else
+						timer = vim.loop.new_timer()
+					end
+
+					local callback = vim.schedule_wrap(function()
+						timer:stop()
+						timer:close()
+						timer = nil
+						vim.schedule(function()
+							highlights.update_buffer(buffer)
+						end)
+					end)
+					timer:start(2000, 0, callback)
 				end,
 			})
 		end,
