@@ -52,19 +52,18 @@ local function oil_autocmd()
 				group = group,
 				buffer = buffer,
 				callback = function()
-					if timer then
-						timer:stop()
+					if not timer then
+						vim.schedule(function()
+							highlights.update_buffer(buffer)
+						end)
 					else
-						timer = vim.loop.new_timer()
+						return
 					end
 
 					local callback = vim.schedule_wrap(function()
 						timer:stop()
 						timer:close()
 						timer = nil
-						vim.schedule(function()
-							highlights.update_buffer(buffer)
-						end)
 					end)
 					timer:start(2000, 0, callback)
 				end,
