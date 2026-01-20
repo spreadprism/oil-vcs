@@ -44,7 +44,6 @@ local function oil_autocmd()
 				end,
 			})
 
-			local timer
 			vim.api.nvim_create_autocmd({
 				"TextChanged",
 				"TextChangedI",
@@ -52,21 +51,9 @@ local function oil_autocmd()
 				group = group,
 				buffer = buffer,
 				callback = function()
-					if timer then
-						return
-					end
-
 					vim.schedule(function()
 						highlights.update_buffer(buffer)
 					end)
-
-					timer = vim.loop.new_timer()
-					local callback = vim.schedule_wrap(function()
-						timer:stop()
-						timer:close()
-						timer = nil
-					end)
-					timer:start(2000, 0, callback)
 				end,
 			})
 		end,
