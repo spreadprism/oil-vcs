@@ -31,20 +31,11 @@ local function oil_autocmd()
 	vim.api.nvim_create_autocmd({ "FileType" }, {
 		group = group,
 		pattern = { "oil" },
-		callback = function()
-			local buffer = vim.api.nvim_get_current_buf()
-
-			vim.api.nvim_create_autocmd("BufEnter", {
-				group = group,
-				buffer = buffer,
-				callback = function()
-					vim.schedule(function()
-						highlights.update_buffer(buffer)
-					end)
-				end,
-			})
+		callback = function(args)
+			local buffer = args.buf
 
 			vim.api.nvim_create_autocmd({
+				"BufEnter",
 				"TextChanged",
 				"TextChangedI",
 			}, {
@@ -75,8 +66,8 @@ local function neogit_autocmd()
 	vim.api.nvim_create_autocmd({ "FileType" }, {
 		group = group,
 		pattern = { "NeogitStatus" },
-		callback = function()
-			local buffer = vim.api.nvim_get_current_buf()
+		callback = function(args)
+			local buffer = args.buf
 
 			vim.api.nvim_create_autocmd("BufLeave", {
 				group = group,

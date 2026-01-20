@@ -18,8 +18,6 @@ local default_opts = {
 	end,
 	autocmd = true,
 	user_events = {},
-	cache_delay = 2000,
-	apply_debounce = 200,
 	providers = {
 		require("oil-vcs.provider.git"),
 	},
