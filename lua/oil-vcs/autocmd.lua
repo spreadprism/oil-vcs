@@ -7,7 +7,7 @@ local highlights = require("oil-vcs.highlights")
 local provider = require("oil-vcs.provider")
 
 local function user_autocmd()
-	local opts = require("oil-vcs.opts").opts()
+	local opts = require("oil-vcs.opts").opts
 
 	vim.api.nvim_create_autocmd("User", {
 		group = group,

@@ -26,7 +26,7 @@ local NAMESPACE = vim.api.nvim_create_namespace(PREFIX .. "Highlights")
 
 ---@param bufnr? integer
 function M.update_buffer(bufnr)
-	local opts = require("oil-vcs.opts").opts()
+	local opts = require("oil-vcs.opts").opts
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()
 

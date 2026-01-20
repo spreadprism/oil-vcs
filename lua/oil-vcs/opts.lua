@@ -35,18 +35,13 @@ local default_opts = {
 	},
 }
 
-local opts = default_opts
+M.opts = default_opts
 
 ---@param user_opts? oil-vcs.Opts
 ---@return oil-vcs.Opts
 function M.setup(user_opts)
-	opts = vim.tbl_deep_extend("force", default_opts, user_opts or {})
-	return opts
-end
-
----@return oil-vcs.Opts
-function M.opts()
-	return opts
+	M.opts = vim.tbl_deep_extend("force", default_opts, user_opts or {})
+	return M.opts
 end
 
 return M

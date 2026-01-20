@@ -14,7 +14,7 @@ M.providers = {}
 
 ---@param path string
 local function init_provider(path)
-	local opts = require("oil-vcs.opts").opts()
+	local opts = require("oil-vcs.opts").opts
 
 	for _, initiator in pairs(opts.providers) do
 		local can_handle, root = initiator.detect(path)
