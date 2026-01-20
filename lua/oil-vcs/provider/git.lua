@@ -94,22 +94,6 @@ function GitProvider:refresh()
 	self.cache = status
 end
 
-function GitProvider:refresh_defer()
-	if self.timer then
-		self.timer:stop()
-	else
-		self.timer = vim.loop.new_timer()
-	end
-
-	local callback = vim.schedule_wrap(function()
-		self.timer:stop()
-		self.timer:close()
-		self.timer = nil
-		self:refresh()
-	end)
-	self.timer:start(2000, 0, callback)
-end
-
 function M.detect(path)
 	local output = vim.fn.system(string.format("cd %s && git rev-parse --show-toplevel", path))
 
