@@ -5,16 +5,15 @@ local M = {}
 
 ---@class oil-vcs.GitProvider : oil-vcs.Provider
 ---@field cache oil-vcs.GitCache The cached status of files in the repository
-local GitProvider = {
-	cache = {},
-}
+---@field first boolean
+local GitProvider = {}
 
 ---@param root string
 function M.new(root)
 	local self = setmetatable({}, { __index = GitProvider })
 	self.root = root
 	self.cache = {}
-	self:refresh()
+	self.first = true
 	return self
 end
 
@@ -52,6 +51,10 @@ local status = {
 ---@param path string
 ---@return oil-vcs.Status|nil
 function GitProvider:status(path)
+	if self.first then
+		self:refresh()
+		self.first = false
+	end
 	return self.cache[path]
 end
 
