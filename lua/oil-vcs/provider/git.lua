@@ -22,10 +22,6 @@ local Status = require("oil-vcs.types").Status
 ---@param path string
 ---@return oil-vcs.Status|nil
 function GitProvider:status(path)
-	if self.first then
-		self:refresh()
-		self.first = false
-	end
 	return self.cache[path]
 end
 

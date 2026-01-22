@@ -4,6 +4,7 @@
 
 ---@class oil-vcs.Provider
 ---@field root string root directory of the provider
+---@field first boolean indicates if this is the first time the provider is being used
 ---@field refresh fun(self)
 ---@field status fun(self, path: string): oil-vcs.Status|nil
 
@@ -74,6 +75,10 @@ function M.status(path)
 	path = vim.fs.abspath(path)
 	local provider = get_provider(path)
 	if provider then
+		if provider.first then
+			provider:refresh()
+			provider.first = false
+		end
 		return provider:status(path)
 	end
 end
