@@ -76,7 +76,7 @@ local function git_status(root)
 				tbl[vim.fs.joinpath(root, path)] = status
 				if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
 					local dir = vim.fs.dirname(path)
-					while dir ~= root and dir ~= "" and dir ~= "/" do
+					while dir and dir ~= root and dir ~= "" and dir ~= "/" do
 						-- TODO: add status priority list
 						if not tbl[dir] then
 							tbl[dir .. "/"] = status
