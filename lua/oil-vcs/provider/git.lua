@@ -78,7 +78,7 @@ local function git_status(root)
 				if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
 					local dir = vim.fs.dirname(path)
 					while dir ~= root and dir ~= "" and dir ~= "/" do
-						-- TODO: add status priority list
+						-- TODO: status priority
 						if not tbl[dir] then
 							tbl[dir .. "/"] = status
 						end
@@ -96,10 +96,16 @@ function GitProvider:refresh()
 end
 
 function M.detect(path)
-	local output = vim.fn.system(string.format("cd %s && git rev-parse --show-toplevel", path))
-
-	output = vim.trim(output)
-	return vim.v.shell_error == 0, output
+	local code, output
+	vim.system({ "git", "rev-parse", "--show-toplevel" }, {
+		cwd = path,
+	}, function(obj)
+		code = obj.code
+		if code == 0 then
+			output = vim.trim(obj.stdout)
+		end
+	end):wait()
+	return code, output
 end
 
 return M
