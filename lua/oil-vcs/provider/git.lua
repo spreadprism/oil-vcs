@@ -19,35 +19,6 @@ end
 
 local Status = require("oil-vcs.types").Status
 
----@alias statusDetector fun(status: string, first:string, last:string): boolean
----@type statusDetector[]
-local status = {
-	[Status.Ignored] = function(status, _, _)
-		return status == "!!"
-	end,
-	[Status.Untracked] = function(status, _, _)
-		return status == "??"
-	end,
-	[Status.Conflict] = function(status, _, _)
-		return vim.tbl_contains({ "UU", "AA", "DD", "AU", "UA", "DU", "UD" }, status)
-	end,
-	[Status.PartialStage] = function(status, _, _)
-		return vim.tbl_contains({ "MM", "MD", "AM", "AD" }, status)
-	end,
-	[Status.Modified] = function(_, first, last)
-		return first == "M" or last == "M"
-	end,
-	[Status.Added] = function(_, first, _)
-		return first == "A"
-	end,
-	[Status.Renamed] = function(_, first, _)
-		return first == "R"
-	end,
-	[Status.Deleted] = function(_, first, last)
-		return first == "D" or last == "D"
-	end,
-}
-
 ---@param path string
 ---@return oil-vcs.Status|nil
 function GitProvider:status(path)
@@ -56,6 +27,36 @@ function GitProvider:status(path)
 		self.first = false
 	end
 	return self.cache[path]
+end
+
+---@param line string
+---@return oil-vcs.Status|nil
+---@return string|nil
+local function parse_status_porcelain(line)
+	local X, Y, path = string.match(line, "^(.)(.) (.+)$")
+	if not (X and Y and path) then
+		return nil, nil
+	end
+
+	local status = nil
+
+	if X == Y and X == "!" then
+		status = Status.Ignored
+	elseif X == Y and X == "?" then
+		status = Status.Untracked
+	elseif vim.tbl_contains({ "UU", "AA", "DD", "AU", "UA", "DU", "UD" }, X .. Y) then
+		status = Status.Conflict
+	elseif vim.tbl_contains({ "MM", "MD", "AM", "AD" }, X .. Y) then
+		status = Status.PartialStage
+	elseif X == "M" or Y == "M" then
+		status = Status.Modified
+	elseif X == "R" then
+		status = Status.Renamed
+	elseif X == "D" or Y == "D" then
+		status = Status.Deleted
+	end
+
+	return status, path
 end
 
 ---@param root string
@@ -70,14 +71,9 @@ local function git_status(root)
 		local lines = vim.split(obj.stdout, "\n")
 
 		for _, line in ipairs(lines) do
-			local s1, s2, path = string.match(line, "^(.)(.) (.+)$")
-			if s1 and s2 and path then
-				for status_name, detector in pairs(status) do
-					if detector(s1 .. s2, s1, s2) then
-						tbl[vim.fs.joinpath(root, path)] = status_name
-						break
-					end
-				end
+			local status, path = parse_status_porcelain(line)
+			if status then
+				tbl[vim.fs.joinpath(root, path)] = status
 			end
 		end
 	end):wait()
