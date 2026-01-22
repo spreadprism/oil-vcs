@@ -29,13 +29,12 @@ function GitProvider:status(path)
 	return self.cache[path]
 end
 
----@param line string
+---@param X string
+---@param Y string
 ---@return oil-vcs.Status|nil
----@return string|nil
-local function parse_status_porcelain(line)
-	local X, Y, path = string.match(line, "^(.)(.) (.+)$")
-	if not (X and Y and path) then
-		return nil, nil
+local function parse_status_porcelain(X, Y)
+	if not (X and Y) then
+		return nil
 	end
 
 	local status = nil
@@ -56,7 +55,7 @@ local function parse_status_porcelain(line)
 		status = Status.Deleted
 	end
 
-	return status, path
+	return status
 end
 
 ---@param root string
@@ -71,20 +70,21 @@ local function git_status(root)
 		local lines = vim.split(obj.stdout, "\n")
 
 		for _, line in ipairs(lines) do
-			-- local status, path = parse_status_porcelain(line)
-			-- if status then
-			-- 	tbl[vim.fs.joinpath(root, path)] = status
-			-- if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
-			-- 	local dir = vim.fs.dirname(path)
-			-- 	while dir and dir ~= root and dir ~= "" and dir ~= "/" do
-			-- 		-- TODO: add status priority list
-			-- 		if not tbl[dir] then
-			-- 			tbl[dir .. "/"] = status
-			-- 		end
-			-- 		dir = vim.fs.dirname(dir)
-			-- 	end
-			-- end
-			-- end
+			local X, Y, path = string.match(line, "^(.)(.) (.+)$")
+			local status = parse_status_porcelain(X, Y)
+			if status then
+				tbl[vim.fs.joinpath(root, path)] = status
+				-- if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
+				-- 	local dir = vim.fs.dirname(path)
+				-- 	while dir and dir ~= root and dir ~= "" and dir ~= "/" do
+				-- 		-- TODO: add status priority list
+				-- 		if not tbl[dir] then
+				-- 			tbl[dir .. "/"] = status
+				-- 		end
+				-- 		dir = vim.fs.dirname(dir)
+				-- 	end
+				-- end
+			end
 		end
 	end):wait()
 	return tbl
