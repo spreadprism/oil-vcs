@@ -7,6 +7,9 @@ M.Status = {
 	Untracked = "untracked",
 	Ignored = "ignored",
 	Renamed = "renamed",
+	Deleted = "deleted",
+	Conflict = "conflict",
+	PartialStage = "partial_stage",
 }
 
 return M

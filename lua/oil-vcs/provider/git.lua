@@ -20,16 +20,33 @@ end
 
 local Status = require("oil-vcs.types").Status
 
----@type table<string, oil-vcs.Status | table<string, oil-vcs.Status>>
-local status_match = {
-	["M"] = Status.Modified, -- (M*)
-	["A"] = Status.Added, -- (A*)
-	["?"] = Status.Untracked, --(?*)
-	["!"] = Status.Ignored, -- (?*)
-	[" "] = { -- ( *)
-		["M"] = Status.Modified, -- ( M)
-		["A"] = Status.Added, -- ( A)
-	},
+---@alias statusDetector fun(status: string, first:string, last:string): boolean
+---@type statusDetector[]
+local status = {
+	[Status.Ignored] = function(status, _, _)
+		return status == "!!"
+	end,
+	[Status.Untracked] = function(status, _, _)
+		return status == "??"
+	end,
+	[Status.Conflict] = function(status, _, _)
+		return vim.tbl_contains({ "UU", "AA", "DD", "AU", "UA", "DU", "UD" }, status)
+	end,
+	[Status.PartialStage] = function(status, _, _)
+		return vim.tbl_contains({ "MM", "MD", "AM", "AD" }, status)
+	end,
+	[Status.Modified] = function(_, first, last)
+		return first == "M" or last == "M"
+	end,
+	[Status.Added] = function(_, first, _)
+		return first == "A"
+	end,
+	[Status.Renamed] = function(_, first, _)
+		return first == "R"
+	end,
+	[Status.Deleted] = function(_, first, last)
+		return first == "D" or last == "D"
+	end,
 }
 
 ---@param path string
@@ -52,13 +69,11 @@ local function git_status(root)
 		for _, line in ipairs(lines) do
 			local s1, s2, path = string.match(line, "^(.)(.) (.+)$")
 			if s1 and s2 and path then
-				local status = status_match[s1]
-				if type(status) == "table" then
-					status = status[s2]
-				end
-
-				if status then
-					tbl[vim.fs.joinpath(root, path)] = status
+				for status_name, detector in pairs(status) do
+					if detector(s1 .. s2, s1, s2) then
+						tbl[vim.fs.joinpath(root, path)] = status_name
+						break
+					end
 				end
 			end
 		end

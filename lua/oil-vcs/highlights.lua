@@ -3,10 +3,10 @@ local M = {}
 local PREFIX = require("oil-vcs.opts").PLUGIN_PREFIX
 
 local default_highlights = {
-	[PREFIX .. "Added"] = { link = "Added" },
-	[PREFIX .. "Modified"] = { link = "DiagnosticWarn" },
-	[PREFIX .. "Renamed"] = { link = "DiagnosticWarn" },
-	[PREFIX .. "Untracked"] = { link = "NonText" },
+	[PREFIX .. "Added"] = { fg = "#a6e3a1" },
+	[PREFIX .. "Modified"] = { fg = "#f9e2af" },
+	[PREFIX .. "Renamed"] = { fg = "#cba6f7" },
+	[PREFIX .. "Untracked"] = { fg = "#89b4fa" },
 	[PREFIX .. "Ignored"] = { link = "NonText" },
 }
 
@@ -25,16 +25,20 @@ end
 local NAMESPACE = vim.api.nvim_create_namespace(PREFIX .. "Highlights")
 
 ---@param bufnr? integer
-function M.update_buffer(bufnr)
+function M.update_oil_buffer(bufnr)
 	local opts = require("oil-vcs.opts").opts
 	local oil = require("oil")
 	local buf = bufnr or vim.api.nvim_get_current_buf()
 
 	local current_dir = oil.get_current_dir(buf)
 
-	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+	if not current_dir then
+		return
+	end
 
 	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
+
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 	for i, line in ipairs(lines) do
 		local entry = oil.get_entry_on_line(buf, i)
 		if entry then
@@ -51,11 +55,7 @@ function M.update_buffer(bufnr)
 				if hl and symbol then
 					local name_start = line:find(entry.name, 1, true)
 					if name_start then
-						local end_col = name_start + #entry.name
-						if entry.type == "file" then
-							end_col = end_col - 1
-						end
-
+						local end_col = name_start + #entry.name - (entry.type == "file" and 1 or 0)
 						vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
 							end_col = end_col,
 							hl_group = hl,

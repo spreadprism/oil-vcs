@@ -43,7 +43,7 @@ local function oil_autocmd()
 				buffer = buffer,
 				callback = function()
 					vim.schedule(function()
-						highlights.update_buffer(buffer)
+						highlights.update_oil_buffer(buffer)
 					end)
 				end,
 			})
