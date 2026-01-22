@@ -74,38 +74,24 @@ local function git_status(root)
 			local status, path = parse_status_porcelain(line)
 			if status then
 				tbl[vim.fs.joinpath(root, path)] = status
+				if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
+					local dir = vim.fs.dirname(path)
+					while dir ~= root and dir ~= "" and dir ~= "/" do
+						-- TODO: add status priority list
+						if not tbl[dir] then
+							tbl[dir .. "/"] = status
+						end
+						dir = vim.fs.dirname(dir)
+					end
+				end
 			end
 		end
 	end):wait()
 	return tbl
 end
 
----@param root string
----@param tbl table<string, oil-vcs.Status>
----@return table<string, oil-vcs.Status>
-local function propagate_status(root, tbl)
-	---@type table<string, oil-vcs.Status>
-	local new_tbl = {}
-
-	for path, status in pairs(tbl) do
-		if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
-			local dir = vim.fs.dirname(path)
-			while dir ~= root and dir ~= "" and dir ~= "/" do
-				if not new_tbl[dir] then
-					new_tbl[dir .. "/"] = status
-				end
-				dir = vim.fs.dirname(dir)
-			end
-		end
-	end
-
-	return vim.tbl_extend("force", new_tbl, tbl)
-end
-
 function GitProvider:refresh()
-	local status = git_status(self.root)
-	status = propagate_status(self.root, status)
-	self.cache = status
+	self.cache = git_status(self.root)
 end
 
 function M.detect(path)
