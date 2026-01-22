@@ -73,10 +73,11 @@ local function git_status(root)
 			local X, Y, path = string.match(line, "^(.)(.) (.+)$")
 			local status = parse_status_porcelain(X, Y)
 			if status then
-				tbl[vim.fs.joinpath(root, path)] = status
+				path = vim.fs.joinpath(root, path)
+				tbl[path] = status
 				if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
 					local dir = vim.fs.dirname(path)
-					while dir and dir ~= root and dir ~= "" and dir ~= "/" do
+					while dir ~= root and dir ~= "" and dir ~= "/" do
 						-- TODO: add status priority list
 						if not tbl[dir] then
 							tbl[dir .. "/"] = status
