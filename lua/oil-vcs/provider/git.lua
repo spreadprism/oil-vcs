@@ -25,11 +25,12 @@ function GitProvider:status(path)
 	return self.cache[path]
 end
 
----@param X string
----@param Y string
+---@param line string
 ---@return oil-vcs.Status|nil
-local function parse_status_porcelain(X, Y)
-	if not (X and Y) then
+---@return string|nil
+local function parse_status_porcelain(line)
+	local X, Y, path = string.match(line, "^(.)(.) (.+)$")
+	if not (X and Y and path) then
 		return nil
 	end
 
@@ -47,11 +48,13 @@ local function parse_status_porcelain(X, Y)
 		status = Status.Modified
 	elseif X == "R" then
 		status = Status.Renamed
+		local _, to = string.match(path, "^(.-) %-> (.+)$")
+		path = to
 	elseif X == "D" or Y == "D" then
 		status = Status.Deleted
 	end
 
-	return status
+	return status, path
 end
 
 ---@param root string
@@ -66,16 +69,8 @@ local function git_status(root)
 		local lines = vim.split(obj.stdout, "\n")
 
 		for _, line in ipairs(lines) do
-			local X, Y, path = string.match(line, "^(.)(.) (.+)$")
-			local status = parse_status_porcelain(X, Y)
-			if status then
-				if status == Status.Renamed then
-					-- handle renamed files
-					local from, to = string.match(path, "^(.-) %-> (.+)$")
-					if from and to then
-						path = to
-					end
-				end
+			local status, path = parse_status_porcelain(line)
+			if status and path then
 				path = vim.fs.joinpath(root, path)
 				tbl[path] = status
 				if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
