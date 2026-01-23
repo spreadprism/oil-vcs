@@ -44,6 +44,8 @@ local function parse_status_porcelain(line)
 		status = Status.Conflict
 	elseif vim.tbl_contains({ "MM", "MD", "AM", "AD" }, X .. Y) then
 		status = Status.PartialStage
+	elseif X == "A" then
+		status = Status.Added
 	elseif X == "M" or Y == "M" then
 		status = Status.Modified
 	elseif X == "R" then
