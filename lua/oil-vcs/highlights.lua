@@ -7,10 +7,10 @@ local default_highlights = {
 	[PREFIX .. "Modified"] = { fg = "#e0af68" },
 	[PREFIX .. "Renamed"] = { fg = "#cba6f7" },
 	[PREFIX .. "Untracked"] = { fg = "#7aa2f7" },
-	[PREFIX .. "Ignored"] = { link = "NonText" },
+	[PREFIX .. "Ignored"] = { fg = "#565F89" },
 	[PREFIX .. "Deleted"] = { fg = "#f7768e" },
 	[PREFIX .. "Conflict"] = { fg = "#f7768e" },
-	[PREFIX .. "PartialStage"] = { fg = "#e0af68" },
+	[PREFIX .. "PartialStage"] = { fg = "#66AAD1" },
 }
 
 function M.setup()
