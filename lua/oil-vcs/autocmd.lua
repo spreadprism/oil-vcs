@@ -80,14 +80,7 @@ local function neogit_autocmd()
 	})
 end
 
----@param opts oil-vcs.Opts
-function M.setup(opts)
-	local autocmd = type(opts.autocmd) == "function" and opts.autocmd() or opts.autocmd
-
-	if not autocmd then
-		return
-	end
-
+function M.setup()
 	user_autocmd()
 	oil_autocmd()
 

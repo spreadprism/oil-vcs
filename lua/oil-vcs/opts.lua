@@ -8,7 +8,6 @@ local Status = types.Status
 ---@class oil-vcs.Opts
 ---@field cwd string | fun(): string
 ---@field user_events string[] List of user events that trigger a VCS status refresh
----@field autocmd boolean | fun(): boolean
 ---@field symbols table<oil-vcs.Status, string> Symbols used to represent different VCS statuses
 ---@field hl table<oil-vcs.Status, string> Highlight groups for different VCS statuses
 ---@field providers oil-vcs.ProviderInitiator[] List of VCS providers to use
@@ -16,7 +15,6 @@ local default_opts = {
 	cwd = function()
 		return vim.fn.getcwd()
 	end,
-	autocmd = true,
 	user_events = {},
 	providers = {
 		require("oil-vcs.provider.git"),
@@ -26,12 +24,20 @@ local default_opts = {
 		[Status.Modified] = "~",
 		[Status.Untracked] = "?",
 		[Status.Ignored] = "!",
+		[Status.Deleted] = "-",
+		[Status.Renamed] = "→",
+		[Status.Conflict] = "C",
+		[Status.PartialStage] = "PS",
 	},
 	hl = {
 		[Status.Added] = "OilVcsAdded",
 		[Status.Modified] = "OilVcsModified",
 		[Status.Untracked] = "OilVcsUntracked",
 		[Status.Ignored] = "OilVcsIgnored",
+		[Status.Deleted] = "OilVcsDeleted",
+		[Status.Renamed] = "OilVcsRenamed",
+		[Status.Conflict] = "OilVcsConflict",
+		[Status.PartialStage] = "OilVcsPartialStage",
 	},
 }
 

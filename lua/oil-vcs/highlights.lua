@@ -3,15 +3,18 @@ local M = {}
 local PREFIX = require("oil-vcs.opts").PLUGIN_PREFIX
 
 local default_highlights = {
-	[PREFIX .. "Added"] = { fg = "#a6e3a1" },
-	[PREFIX .. "Modified"] = { fg = "#f9e2af" },
+	[PREFIX .. "Added"] = { fg = "#9ece6a" },
+	[PREFIX .. "Modified"] = { fg = "#e0af68" },
 	[PREFIX .. "Renamed"] = { fg = "#cba6f7" },
-	[PREFIX .. "Untracked"] = { fg = "#89b4fa" },
+	[PREFIX .. "Untracked"] = { fg = "#7aa2f7" },
 	[PREFIX .. "Ignored"] = { link = "NonText" },
+	[PREFIX .. "Deleted"] = { fg = "#f7768e" },
+	[PREFIX .. "Conflict"] = { fg = "#f7768e" },
+	[PREFIX .. "PartialStage"] = { fg = "#e0af68" },
 }
 
----@param opts oil-vcs.Opts
-function M.setup(opts)
+function M.setup()
+	local opts = require("oil-vcs.opts").opts
 	for _, hl in pairs(opts.hl) do
 		local name, hl_opts = hl, default_highlights[hl]
 		if hl_opts ~= nil then
