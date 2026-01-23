@@ -69,6 +69,13 @@ local function git_status(root)
 			local X, Y, path = string.match(line, "^(.)(.) (.+)$")
 			local status = parse_status_porcelain(X, Y)
 			if status then
+				if status == Status.Renamed then
+					-- handle renamed files
+					local from, to = string.match(path, "^(.-) %-> (.+)$")
+					if from and to then
+						path = to
+					end
+				end
 				path = vim.fs.joinpath(root, path)
 				tbl[path] = status
 				if vim.tbl_contains({ Status.Added, Status.Untracked, Status.Modified }, status) then
