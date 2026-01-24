@@ -59,10 +59,16 @@ function M.update_oil_buffer(bufnr)
 					local name_start = line:find(entry.name, 1, true)
 					if name_start then
 						local end_col = name_start + #entry.name - (entry.type == "file" and 1 or 0)
+
+						local virt_text = nil
+						if opts.symbols_on_dir or entry.type == "file" then
+							virt_text = { { symbol .. " ", hl } }
+						end
+
 						vim.api.nvim_buf_set_extmark(buf, NAMESPACE, i - 1, name_start - 1, {
 							end_col = end_col,
 							hl_group = hl,
-							virt_text = { { symbol .. " ", hl } },
+							virt_text = virt_text,
 							virt_text_pos = "eol",
 						})
 					end

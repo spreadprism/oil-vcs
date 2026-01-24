@@ -19,6 +19,7 @@ local default_opts = {
 	providers = {
 		require("oil-vcs.provider.git"),
 	},
+	symbols_on_dir = true,
 	symbols = {
 		[Status.Added] = "+",
 		[Status.Modified] = "~",
