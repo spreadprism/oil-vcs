@@ -41,6 +41,10 @@ function M.update_oil_buffer(bufnr)
 
 	vim.api.nvim_buf_clear_namespace(buf, NAMESPACE, 0, -1)
 
+	if not vim.startswith(current_dir, vim.fn.getcwd(0)) then
+		return
+	end
+
 	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 	for i, line in ipairs(lines) do
 		local entry = oil.get_entry_on_line(buf, i)
