@@ -34,6 +34,10 @@ local function oil_autocmd()
 		callback = function(args)
 			local buffer = args.buf
 
+			if not vim.startswith(require("oil").get_current_dir(buffer) or "", vim.fn.getcwd()) then
+				return
+			end
+
 			vim.api.nvim_create_autocmd({
 				"BufEnter",
 				"TextChanged",
