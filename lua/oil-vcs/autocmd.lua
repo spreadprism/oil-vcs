@@ -87,10 +87,7 @@ end
 function M.setup()
 	user_autocmd()
 	oil_autocmd()
-
-	if pcall(require, "neogit") then
-		neogit_autocmd()
-	end
+	neogit_autocmd()
 end
 
 return M
