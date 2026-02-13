@@ -27,8 +27,8 @@ local default_opts = {
 		[Status.Ignored] = "!",
 		[Status.Deleted] = "-",
 		[Status.Renamed] = "→",
-		[Status.Conflict] = "C",
-		[Status.PartialStage] = "PS",
+		[Status.Conflict] = "-",
+		[Status.PartialStage] = "~",
 	},
 	hl = {
 		[Status.Added] = "OilVcsAdded",
