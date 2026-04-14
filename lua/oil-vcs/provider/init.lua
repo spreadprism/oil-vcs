@@ -55,9 +55,14 @@ local function get_provider(path)
 	return init_provider(path)
 end
 
+local refreshing = false
 ---@param path? string
 ---@overload fun(bufnr?: integer)
-function M.refresh(path)
+function M.refresh(path, force)
+	if refreshing then
+		return
+	end
+	refreshing = true
 	if path then
 		local provider = get_provider(path)
 		if provider then
@@ -68,6 +73,7 @@ function M.refresh(path)
 			provider:refresh()
 		end
 	end
+	refreshing = false
 end
 
 ---@param path string

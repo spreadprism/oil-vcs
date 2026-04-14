@@ -23,7 +23,7 @@ local function oil_autocmd()
 		group = group,
 		pattern = { "OilActionsPost" },
 		callback = function(_)
-			provider.refresh() -- TODO: only refresh on dir actions paths
+			provider.refresh()
 		end,
 	})
 
