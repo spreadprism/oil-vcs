@@ -73,7 +73,9 @@ function M.refresh(path, force)
 			provider:refresh()
 		end
 	end
-	refreshing = false
+	vim.defer_fn(function()
+		refreshing = false
+	end, 100)
 end
 
 ---@param path string
