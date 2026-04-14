@@ -96,16 +96,11 @@ function GitProvider:refresh()
 end
 
 function M.detect(path)
-	local code, output
-	vim.system({ "git", "rev-parse", "--show-toplevel" }, {
-		cwd = path,
-	}, function(obj)
-		code = obj.code
-		if code == 0 then
-			output = vim.trim(obj.stdout)
-		end
-	end):wait()
-	return code, output
+	local git_dirs = vim.fs.find(".git", { upward = true, path = path })
+	if git_dirs and git_dirs[1] then
+		return true, vim.fs.dirname(git_dirs[1])
+	end
+	return false, ""
 end
 
 return M
