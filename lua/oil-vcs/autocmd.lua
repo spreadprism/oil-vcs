@@ -9,6 +9,9 @@ local provider = require("oil-vcs.provider")
 local function user_autocmd()
 	local opts = require("oil-vcs.opts").opts
 
+	if #opts.user_events == 0 then
+		return
+	end
 	vim.api.nvim_create_autocmd("User", {
 		group = group,
 		pattern = opts.user_events,
